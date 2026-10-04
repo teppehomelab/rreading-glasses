@@ -234,13 +234,13 @@ func newDBMetrics(db *pgxpool.Pool, reg *prometheus.Registry) *dbMetrics {
 		for {
 			row := db.QueryRow(ctx, `
 			  SELECT
-				sum(CASE WHEN key LIKE 'a%'  THEN 1 ELSE 0 END) AS authors,
-				sum(CASE WHEN key LIKE 'b%'  THEN 1 ELSE 0 END) AS editions,
-				sum(CASE WHEN key LIKE 'w%'  THEN 1 ELSE 0 END) AS works,
-				sum(CASE WHEN key LIKE 'ra%' THEN 1 ELSE 0 END) AS refreshing,
-				sum(CASE WHEN key LIKE 's%'  THEN 1 ELSE 0 END) AS seriess,
-				sum(CASE WHEN key LIKE 'z%'  THEN 1 ELSE 0 END) AS asin,
-				sum(CASE WHEN key LIKE 'i%'  THEN 1 ELSE 0 END) AS isbn
+				COALESCE(sum(CASE WHEN key LIKE 'a%'  THEN 1 ELSE 0 END), 0) AS authors,
+				COALESCE(sum(CASE WHEN key LIKE 'b%'  THEN 1 ELSE 0 END), 0) AS editions,
+				COALESCE(sum(CASE WHEN key LIKE 'w%'  THEN 1 ELSE 0 END), 0) AS works,
+				COALESCE(sum(CASE WHEN key LIKE 'ra%' THEN 1 ELSE 0 END), 0) AS refreshing,
+				COALESCE(sum(CASE WHEN key LIKE 's%'  THEN 1 ELSE 0 END), 0) AS seriess,
+				COALESCE(sum(CASE WHEN key LIKE 'z%'  THEN 1 ELSE 0 END), 0) AS asin,
+				COALESCE(sum(CASE WHEN key LIKE 'i%'  THEN 1 ELSE 0 END), 0) AS isbn
 			  FROM cache;
 			`)
 			var authors, editions, works, refreshing, series, asin, isbn int64
